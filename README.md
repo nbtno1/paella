@@ -1,2 +1,2 @@
-# Trung-la-so-1
-Trung no1
+# Paella
+This is Trung's app. It has some cooking recipes that Trung likes!
