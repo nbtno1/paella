@@ -1,2 +1,2 @@
-# hello-world
-My first repository
+# Trung-la-so-1
+Trung no1
