@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Paella</string>
+    <string name="facebook_app_id">480484589415824</string>
+    <string name="fb_login_protocol_scheme">fb480484589415824</string>
+</resources>

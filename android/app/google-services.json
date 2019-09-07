@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "403670504312",
+    "firebase_url": "https://login-558ce.firebaseio.com",
+    "project_id": "login-558ce",
+    "storage_bucket": "login-558ce.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:403670504312:android:51090103d7fe1aa9",
+        "android_client_info": {
+          "package_name": "com.paella"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "403670504312-ltj78pqpsd1d1nhp540qie1l89fmud6v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.paella",
+            "certificate_hash": "4c140a0fc8064e3729ceb2519bbedc17de99188e"
+          }
+        },
+        {
+          "client_id": "403670504312-mkd6f4rc70icsprgvbp42rf8su1aokde.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZ10NHl-bf2VpAlia6qvijzrsuzQnti0I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "403670504312-mkd6f4rc70icsprgvbp42rf8su1aokde.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
