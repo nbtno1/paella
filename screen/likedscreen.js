@@ -45,8 +45,8 @@ export default class LikedScreen extends React.Component {
           AccessToken.getCurrentAccessToken()
           .then((data) => {
             const {accessToken} = data
-            self.initUser(accessToken)
             self.removeData()
+            self.initUser(accessToken)
           })
         }
       },

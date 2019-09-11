@@ -28,19 +28,35 @@ export default class DetailScreen extends React.Component {
       ingredient: [],
       instruction: [],
       isLiked: false,
-      isLogin: false
+      isLogin: false,
+      likedList: []
     }
   }
 
   componentDidMount() {
     this.getData1()
     this.getData2()
+    this.getData3()
+
+  }
+
+  componentWillMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick)
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick)
+  }
+
+  handleBackButtonClick() {
+    this.props.navigation.goBack(null)
+    return true
   }
 
   getData1 = () => {
     const {navigation} = this.props
     const recipe_id = navigation.getParam('data', 'no-data')
-    return fetch('http://10.90.87.30:3000/paella/detail',  {
+    return fetch('http://192.168.0.109:3000/paella/detail',  {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -58,53 +74,66 @@ export default class DetailScreen extends React.Component {
           name: responseJson.data.name,
           ingredient: responseJson.data.ingredient,
           instruction: responseJson.data.instruction})
-        console.log(this.state.data)
       })
       .catch((error) => {
-        console.log('Lỗi',error)
+        console.log(error)
       })
   }
 
   getData2 = async () => {
       try {
-        const value1 = await AsyncStorage.getItem('member')
-        const value2 = await AsyncStorage.getItem('khongthichlogin')
+        const value = await AsyncStorage.getItem('member')
 
-        if(value1 !== null) {
+        if(value !== null) {
           this.setState({isLogin: true})
-        }
-        else {
-          this.setState({isLogin: false})    
         }
       } catch(e) {
         console.log(e)
       }
   }
 
+  getData3 = async () => {
+    const {navigation} = this.props
+    const recipe_id = navigation.getParam('data', 'no-data')
+      try {
+        const value = await AsyncStorage.getItem('id')
+        let arr = value.split(',')
+        this.setState({likedList: arr})
+        if(value !== null && arr.indexOf(recipe_id) >= 0) {
+          this.setState({isLiked: true})
+        }
+      } catch(e) {
+        console.log(e)
+      }
+  }
+
+  like = () => {
+    const {navigation} = this.props
+    const recipe_id = navigation.getParam('data', 'no-data')
+    if(!this.state.isLiked) {
+      this.setState({isLiked: true})
+      this.state.likedList.push(recipe_id)
+    } else {
+      this.setState({isLiked: false})
+      if(this.state.likedList.indexOf(recipe_id) === 0) {
+        this.state.likedList.shift()
+      } else {
+        this.state.likedList.splice((this.state.likedList.indexOf(recipe_id)), 1)
+      }
+    }
+    this.storeData('id', this.state.likedList.join())
+  }
+
   showAlert = () => {
     Alert.alert('Login to like')
   }
 
-  componentWillMount() {
-    BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick)
-  }
-
-  componentWillUnmount() {
-    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick)
-  }
-
-  handleBackButtonClick() {
-    this.props.navigation.goBack(null)
-    return true
-  }
-
-  like = () => {
-    if(!this.state.isLiked) {
-      this.setState({isLiked: true})
-    } else {
-      this.setState({isLiked: false})
+  storeData = async (key, value) => {
+    try {
+      await AsyncStorage.setItem(key, value)
+    } catch (e) {
+      console.log(e)
     }
-
   }
 
   keyExtractor = (item, index) => index.toString();

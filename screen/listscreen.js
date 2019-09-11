@@ -18,9 +18,9 @@ export default class ListScreen extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      text: '',
       header: {},
-      data: []
+      data: [],
+      result: []
     }
   }
 
@@ -29,8 +29,31 @@ export default class ListScreen extends React.Component {
     this.getListData()
   }
 
+  search = (item) => {
+    console.log(item)
+    return fetch('http://192.168.0.109:3000/paella/search',  {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        text: item,
+      }),
+    })
+      .then((response) =>
+        response.json()
+      )
+      .then((responseJson) => {
+        // this.setState({data: responseJson})
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+
   getHeaderData = () => {
-    return fetch('http://10.90.87.30:3000/paella/header',  {
+    return fetch('http://192.168.0.109:3000/paella/header',  {
       method: 'GET',
       headers: {
         Accept: 'application/json',
@@ -45,12 +68,12 @@ export default class ListScreen extends React.Component {
          this.setState({header: responseJson[index]})
       })
       .catch((error) => {
-        console.log('Lỗi',error)
+        console.log(error)
       })
   }
 
   getListData = () => {
-    return fetch('http://10.90.87.30:3000/paella/list',  {
+    return fetch('http://192.168.0.109:3000/paella/list',  {
       method: 'GET',
       headers: {
         Accept: 'application/json',
@@ -64,7 +87,7 @@ export default class ListScreen extends React.Component {
          this.setState({data: responseJson})
       })
       .catch((error) => {
-        console.log('Lỗi',error)
+        console.log(error)
       })
   }
 
@@ -225,8 +248,6 @@ export default class ListScreen extends React.Component {
 
   render() {
 
-    const { search } = this.state;
-
     return (
       <View style = {styles.container}>
 
@@ -240,11 +261,13 @@ export default class ListScreen extends React.Component {
             borderRadius: 10,
             borderColor: '#409fbf',
           }}
-          onChangeText={(text) => this.setState({text})}
-          value={this.state.text}
-          placeholder={'Search Paella...'}
-          placeholderTextColor={'#8c8c8c'}
-          maxLength= {40}
+          onChangeText = {(text) => {
+            this.search(text)
+          }}
+          value = {this.state.search_text}
+          placeholder = {'Search Paella...'}
+          placeholderTextColor = {'#8c8c8c'}
+          maxLength = {40}
           />
         </View>
 

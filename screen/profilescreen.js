@@ -23,18 +23,19 @@ export default class ProfileScreen extends React.Component {
       isOptionOpen: false,
       userInfo: {},
       ava: 'http://lienminh360.vn/wp-content/uploads/2019/06/avatar-dau-truong-chan-ly.jpg',
+      likedList: [],
+      data: [],
+
     }
-    this.data = [
-      {
-      },
-    ]
   }
 
   componentDidMount() {
-    this.getData()
+    this.getData1()
+    this.getData2()
+    this.getData3()
   }
 
-  getData = async () => {
+  getData1 = async () => {
     try {
       const value = await AsyncStorage.getItem('member')
       if(value !== null) {
@@ -46,6 +47,43 @@ export default class ProfileScreen extends React.Component {
     } catch(e) {
       console.log(e)
     }
+  }
+
+  getData2 = async () => {
+    try {
+      const value = await AsyncStorage.getItem('id')
+      if(value !== null) {
+        let arr = value.split(',')
+        this.setState({likedList: arr})
+        this.setState({isLiked: true})
+      }
+      else {
+        console.log('NO LIKED')
+      }
+    }
+    catch(e) {
+      console.log(e)
+    }
+  }
+
+  getData3 = () => {
+    return fetch('http://192.168.0.109:3000/paella/list', {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
+    .then((response) =>
+      response.json()
+    )
+    .then((responseJson) => {
+      this.setState({data: responseJson})
+      console.log(this.state.data)
+    })
+    .catch((error) => {
+      console.log(error)
+    })
   }
 
   removeData = async () => {
@@ -76,11 +114,41 @@ export default class ProfileScreen extends React.Component {
   handleViewRef = ref => this.view = ref;
 
   renderItem = ({item}) => {
-
     return (
       <SafeAreaView style = {{flex: 1}}>
+      {item.itemData.map((cell, index) => {
+        if (this.state.likedList.indexOf(cell.address) >= 0) {
+          return (
+            <TouchableOpacity
+              style = {{
+                borderWidth: 0.5,
+                borderRadius: 5,
+                margin: 10,
+                height: 100,
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+              key = {index}
+              onPress={() => {
+                  this.props.navigation.push(
+                    'Detail',
+                    {data: cell.address}
+                  )
+              }}
+              >
+              <ImageBackground
+                source = {{uri: cell.image_source}}
+                style = {{
+                  width: '100%',
+                  height: '100%'
+                }}/>
 
-        </SafeAreaView>
+            </TouchableOpacity>
+          )
+        }
+      })}
+
+      </SafeAreaView>
     )
   }
   render() {
@@ -116,12 +184,26 @@ export default class ProfileScreen extends React.Component {
                     {this.state.userInfo.name}
                 </Text>
       </View>
+      <View
+        style = {{
+          marginTop: 15,
+        }}>
+        <Text
+          style = {{
+            marginLeft: 10,
+            fontWeight: '700'
+          }}>
+          Your liked recipes
+        </Text>
+      </View>
+    
         <FlatList
-          data = {this.data}
+          data = {this.state.data}
           showsVerticalScrollIndicator = {false}
           keyExtractor = {this.keyExtractor}
           renderItem = {this.renderItem}
         />
+
         {this.state.isOptionOpen ?
           <TouchableOpacity
             style = {{
@@ -190,7 +272,7 @@ export default class ProfileScreen extends React.Component {
                   borderRadius: 5
                 }}
                 onPress = {this.turnOffOption}
-                >
+              >
                 <Text style = {{color: 'black'}}>Cancel</Text>
               </TouchableOpacity>
             </Animatable.View>
