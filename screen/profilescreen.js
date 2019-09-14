@@ -25,7 +25,6 @@ export default class ProfileScreen extends React.Component {
       ava: 'http://lienminh360.vn/wp-content/uploads/2019/06/avatar-dau-truong-chan-ly.jpg',
       likedList: [],
       data: [],
-
     }
   }
 
@@ -196,7 +195,7 @@ export default class ProfileScreen extends React.Component {
           Your liked recipes
         </Text>
       </View>
-    
+
         <FlatList
           data = {this.state.data}
           showsVerticalScrollIndicator = {false}

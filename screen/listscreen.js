@@ -9,9 +9,11 @@ import { View,
          TouchableOpacity,
          Image,
          SafeAreaView,
-         TextInput
+         TextInput,
+         Dimensions
        } from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage'
+import * as Animatable from 'react-native-animatable'
 
 export default class ListScreen extends React.Component {
 
@@ -20,7 +22,8 @@ export default class ListScreen extends React.Component {
     this.state = {
       header: {},
       data: [],
-      result: []
+      result: [],
+      search: false,
     }
   }
 
@@ -30,7 +33,7 @@ export default class ListScreen extends React.Component {
   }
 
   search = (item) => {
-    console.log(item)
+
     return fetch('http://192.168.0.109:3000/paella/search',  {
       method: 'POST',
       headers: {
@@ -38,14 +41,14 @@ export default class ListScreen extends React.Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        text: item,
+        search_item: item.toUpperCase(),
       }),
     })
       .then((response) =>
         response.json()
       )
       .then((responseJson) => {
-        // this.setState({data: responseJson})
+        this.setState({result: responseJson})
       })
       .catch((error) => {
         console.log(error)
@@ -53,7 +56,7 @@ export default class ListScreen extends React.Component {
   }
 
   getHeaderData = () => {
-    return fetch('http://192.168.0.109:3000/paella/header',  {
+    return fetch('http:/192.168.0.109:3000/paella/header',  {
       method: 'GET',
       headers: {
         Accept: 'application/json',
@@ -89,6 +92,14 @@ export default class ListScreen extends React.Component {
       .catch((error) => {
         console.log(error)
       })
+  }
+
+  turnOnSearch = () => {
+    this.setState({search: true})
+  }
+
+  turnOffSearch = () => {
+    this.setState({search: false})
   }
 
   renderHeader = (item) => {
@@ -134,6 +145,10 @@ export default class ListScreen extends React.Component {
                       }}
                       imageStyle = {{borderRadius: 20, position: 'absolute'}}
                     >
+                    <View
+                      style = {{
+                        backgroundColor: 'rgba(0,0,0,0.3)'
+                      }}>
                       <Text
                         style = {{
                           fontSize: 30,
@@ -141,8 +156,10 @@ export default class ListScreen extends React.Component {
                           margin: 20,
                           fontWeight: 'bold',
                       }}>
-                          {item.title} Them view tao nen
+                          {item.title}
                       </Text>
+                    </View>
+
 
                     </ImageBackground>
 
@@ -246,6 +263,36 @@ export default class ListScreen extends React.Component {
      )
    }
 
+  renderItem_search = ({item}) => {
+    return (
+      <SafeAreaView
+        style = {{
+          flex: 1,
+          width: Dimensions.get('window').width,
+      }}>
+        <TouchableOpacity
+          style = {{
+            margin: 5,
+            borderWidth: 0.5,
+            borderRadius: 5,
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: 400,
+            height: 50
+          }}
+          onPress={() => {
+              this.props.navigation.push(
+                'Detail',
+                {data: item._id}
+              )
+          }}
+        >
+          <Text>{item.name}</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    )
+  }
+
   render() {
 
     return (
@@ -263,6 +310,12 @@ export default class ListScreen extends React.Component {
           }}
           onChangeText = {(text) => {
             this.search(text)
+            if(text.length === 0) {
+              this.turnOffSearch()
+            } else {
+              this.turnOnSearch()
+            }
+
           }}
           value = {this.state.search_text}
           placeholder = {'Search Paella...'}
@@ -270,15 +323,22 @@ export default class ListScreen extends React.Component {
           maxLength = {40}
           />
         </View>
-
-        <FlatList
-          data = {this.state.data}
-          showsVerticalScrollIndicator = {false}
-          keyExtractor = {this.keyExtractor}
-          renderItem = {this.renderItem}
-          ListHeaderComponent = {this.renderHeader(this.state.header)}
-        />
-
+        {!this.state.search ?
+          <FlatList
+            data = {this.state.data}
+            showsVerticalScrollIndicator = {false}
+            keyExtractor = {this.keyExtractor}
+            renderItem = {this.renderItem}
+            ListHeaderComponent = {this.renderHeader(this.state.header)}
+          />
+          :
+          <FlatList
+            data = {this.state.result}
+            showsVerticalScrollIndicator = {false}
+            keyExtractor = {this.keyExtractor}
+            renderItem = {this.renderItem_search}
+          />
+        }
       </View>
     )
   }

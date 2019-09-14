@@ -35,7 +35,7 @@ export default class LikedScreen extends React.Component {
   }
 
   loginFB = () => {
-    const self = this;
+    const self = this
     LoginManager.logInWithPermissions(["public_profile"]).then(
       function(result) {
         if (result.isCancelled) {
@@ -153,7 +153,8 @@ export default class LikedScreen extends React.Component {
   render() {
     return(
       <View style = {{flex: 1}}>
-        {this.state.isLogin ? <ProfileScreen/> :  <View
+        {!this.state.isLogin ?
+         <View
                 style = {{
                   flex: 1,
                   justifyContent: 'center',
@@ -183,9 +184,7 @@ export default class LikedScreen extends React.Component {
                   }}
                 >
                   Log in or create an account to save your favorite recipes
-
                 </Text>
-
 
               </View>
 
@@ -232,7 +231,7 @@ export default class LikedScreen extends React.Component {
                 </TouchableOpacity>
               </View>
 
-              </View>}
+              </View> : <ProfileScreen/> }
       </View>
     )
   }

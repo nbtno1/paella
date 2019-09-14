@@ -56,7 +56,7 @@ export default class DetailScreen extends React.Component {
   getData1 = () => {
     const {navigation} = this.props
     const recipe_id = navigation.getParam('data', 'no-data')
-    return fetch('http://192.168.0.109:3000/paella/detail',  {
+    return fetch('http:/192.168.0.109:3000/paella/detail',  {
       method: 'POST',
       headers: {
         Accept: 'application/json',
